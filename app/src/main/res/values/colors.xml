@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="bg">#082673</color>
+
     <color name="colorSelectedCategory">#FFFF0000</color>
     <color name="colorUnselectedCategory">#000000</color>
 </resources>

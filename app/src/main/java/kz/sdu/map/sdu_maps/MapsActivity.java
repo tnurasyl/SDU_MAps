@@ -11,8 +11,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -27,7 +25,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -56,8 +57,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        GestureDetector.OnGestureListener,
-        CategoriesAdapter.OnClickListener{
+        CategoriesAdapter.OnClickListener {
+
+    private static final String TAG = MapsActivity.class.getSimpleName();
 
     private SearchView searchView;
     private GoogleMap mMap;
@@ -69,8 +71,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location lastlocation;
     private Marker currentLocationmMarker;
     public static final int REQUEST_LOCATION_CODE = 99;
-    public static final int SWIPE_THRESHOLD = 100;
-    public static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     private Marker RedHall, Cattery, B1;
     private List<Marker> markers = new ArrayList<>();
@@ -176,13 +176,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
 
         // SDU location
         LatLng sdu = new LatLng(43.207736, 76.669709);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sdu));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sdu, 9));
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //get location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -203,6 +203,90 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+
+        setMapStyle();
+    }
+
+    private void setMapStyle() {
+        MapStyleOptions style = new MapStyleOptions("[" +
+                "  {" +
+                "    \"elementType\":\"labels\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"administrative\"," +
+                "    \"elementType\":\"geometry\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"administrative.land_parcel\"," +
+                "    \"elementType\":\"geometry\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"administrative.neighborhood\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"poi\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"road\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"road\"," +
+                "    \"elementType\":\"labels.icon\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"transit\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }," +
+                "  {" +
+                "    \"featureType\":\"water\"," +
+                "    \"stylers\":[" +
+                "      {" +
+                "        \"visibility\":\"off\"" +
+                "      }" +
+                "    ]" +
+                "  }" +
+                "]");
+
+        mMap.setMapStyle(style);
     }
 
     protected synchronized void bulidGoogleApiClient() {
@@ -306,7 +390,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     shownMarkers.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
                             .title(places.get(i).getName())
-                            .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
+//                            .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
                             .zIndex(1.0f)));
                 }
             }
@@ -315,10 +399,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ArrayList<CategoryModel> getCategories() {
         ArrayList<CategoryModel> categories = new ArrayList<>();
-        categories.add(new CategoryModel(0, "Блоки", R.drawable.ic_icon_department_24dp, false));
-        categories.add(new CategoryModel(1, "Бочки", R.drawable.ic_icon_bochka_24dp, false));
-        categories.add(new CategoryModel(2, "Столовые", R.drawable.ic_icon_canteen_24dp, false));
-        categories.add(new CategoryModel(3, "Другие", R.drawable.ic_icon_others_24dp, false));
+        categories.add(new CategoryModel(0, "Eating", R.drawable.ic_icon_department_24dp, false));
+        categories.add(new CategoryModel(1, "Halls", R.drawable.ic_icon_bochka_24dp, false));
+        categories.add(new CategoryModel(2, "Library", R.drawable.ic_icon_canteen_24dp, false));
+        categories.add(new CategoryModel(3, "Student ", R.drawable.ic_icon_others_24dp, false));
+        categories.add(new CategoryModel(4, "Red hall", R.drawable.ic_icon_department_24dp, false));
+        categories.add(new CategoryModel(5, "Wardrobe", R.drawable.ic_icon_bochka_24dp, false));
+        categories.add(new CategoryModel(6, "Medical center", R.drawable.ic_icon_canteen_24dp, false));
+        categories.add(new CategoryModel(7, "WC", R.drawable.ic_icon_others_24dp, false));
+        categories.add(new CategoryModel(8, "Canteen", R.drawable.ic_icon_department_24dp, false));
+        categories.add(new CategoryModel(9, "WC", R.drawable.ic_icon_others_24dp, false));
         return categories;
     }
 
@@ -337,7 +427,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void configureRVcategories() {
         rvCategories = findViewById(R.id.rvCategories);
-        rvCategories.setLayoutManager(new GridLayoutManager(this, categories.size()));
+        rvCategories.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL));
 //        rvCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapter = new CategoriesAdapter(categories, MapsActivity.this, this);
         rvCategories.setAdapter(adapter);
@@ -352,79 +442,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent downEvent, MotionEvent moveEvent, float velocityX, float velocityY) {
-        boolean result = false;
-        float diffY = moveEvent.getY() - downEvent.getY();
-        float diffX = moveEvent.getX() - downEvent.getX();
-        // which was greater?  movement across Y or X?
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-            // right or left swipe
-            if (Math.abs(diffX)> SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                if (diffX > 0) {
-                    onSwipeRight();
-                } else {
-                    onSwipeLeft();
-                }
-                result = true;
-            }
-        } else {
-            // up or down swipe
-            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY)> SWIPE_VELOCITY_THRESHOLD) {
-                if (diffY > 0) {
-                    onSwipeBottom();
-                } else {
-                    onSwipeTop();
-                }
-                result = true;
-            }
-        }
-
-        return result;
-    }
-
-    private void onSwipeTop() {
-        flCategory = findViewById(R.id.flCat);
-        flCategory.setVisibility(View.VISIBLE);
-        isOpenCategory = true;
-    }
-
-    private void onSwipeBottom() {
-        flCategory = findViewById(R.id.flCat);
-        flCategory.setVisibility(View.GONE);
-        isOpenCategory = false;
-    }
-
-    private void onSwipeLeft() {
-
-    }
-
-    private void onSwipeRight() {
-
-    }
 }
