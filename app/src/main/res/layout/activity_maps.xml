@@ -28,31 +28,39 @@
     <LinearLayout
         android:id="@+id/flCat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bg"
+        android:layout_height="500px"
+        android:background="@android:color/white"
         android:padding="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <SearchView
-            android:id="@+id/sv_location"
+        <androidx.viewpager.widget.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sv_back"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search..."
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCategories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Text1"
+                        />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Text2"
+                    />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sv_location" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+        </androidx.viewpager.widget.ViewPager>
+
 
     </LinearLayout>
 
