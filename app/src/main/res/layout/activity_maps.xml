@@ -28,39 +28,59 @@
     <LinearLayout
         android:id="@+id/flCat"
         android:layout_width="match_parent"
-        android:layout_height="500px"
-        android:background="@android:color/white"
+        android:layout_height="300dp"
+        android:background="@color/bg"
         android:padding="16dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.viewpager.widget.ViewPager
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/pager"
+        <SearchView
+            android:id="@+id/sv_location"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@drawable/sv_back"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search..."
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Text1"
-                        />
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Text2"
-                    />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/sv_location"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="458dp">
 
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tabFavorites"
+                android:text="Favorites" />
 
-            </com.google.android.material.tabs.TabLayout>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tabFacultets"
+                android:text="Facultets" />
 
-        </androidx.viewpager.widget.ViewPager>
+        </com.google.android.material.tabs.TabLayout>
 
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+
+            android:layout_height="0dp"
+            android:layout_width="0dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </LinearLayout>
 

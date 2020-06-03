@@ -7,5 +7,5 @@
     <color name="bg">#082673</color>
 
     <color name="colorSelectedCategory">#FFFF0000</color>
-    <color name="colorUnselectedCategory">#000000</color>
+    <color name="colorUnselectedCategory"> #FFFFFF</color>
 </resources>
