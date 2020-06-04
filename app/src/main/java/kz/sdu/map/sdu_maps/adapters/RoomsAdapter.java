@@ -80,11 +80,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomVH> {
             ivNext.setVisibility(View.GONE);
             tvName.setText(model.getRoomName());
             ivLogo.setImageResource(model.getLogoId());
-//            if (model.isSelected()){
-//                llContainer.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.colorGray));
-//            }else {
-//                llContainer.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.colorAccent));
-//            }
             llContainer.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), model.getBackgroundColor()));
         }
     }
