@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -24,10 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -41,7 +36,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -59,7 +53,7 @@ import kz.sdu.map.sdu_maps.models.PlaceModel;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener{
+        LocationListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
 
@@ -71,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest locationRequest;
     private Location lastlocation;
     private Marker currentLocationmMarker;
+    private ArrayList<CategoryModel> categories;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     private List<Marker> shownMarkers = new ArrayList<>();
@@ -82,6 +77,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        categories = getCategories();
 
         places = getPlaces();
         flCategory = findViewById(R.id.flCat);
@@ -154,6 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TabItem tabFavorites = findViewById(R.id.tabFavorites);
         TabItem tabFaculites = findViewById(R.id.tabFacultets);
         final ViewPager viewPager = findViewById(R.id.viewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
 
@@ -319,6 +317,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         client.connect();
     }
 
+    private void drawMarkers(int categoryId) {
+        for (Marker marker : shownMarkers) {
+            marker.remove();
+        }
+
+        if (categoryId == -1) {
+            for (int i = 0; i < places.size(); i++) {
+                shownMarkers.add(mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
+                        .title(places.get(i).getName())
+                        .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
+                        .zIndex(1.0f)));
+            }
+        } else {
+            for (int i = 0; i < places.size(); i++) {
+                if (places.get(i).getCategoryId() == categoryId) {
+                    shownMarkers.add(mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
+                            .title(places.get(i).getName())
+//                            .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
+                            .zIndex(1.0f)));
+                }
+            }
+        }
+    }
+
+    private ArrayList<CategoryModel> getCategories() {
+        ArrayList<CategoryModel> categories = new ArrayList<>();
+        categories.add(new CategoryModel(0, "Eating", R.drawable.ic_eat, false));
+        categories.add(new CategoryModel(1, "Halls", R.drawable.ic_hall, false));
+        categories.add(new CategoryModel(2, "Library", R.drawable.ic_library, false));
+        categories.add(new CategoryModel(3, "Technopark ", R.drawable.ic_hall, false));
+        categories.add(new CategoryModel(4, "Accounting", R.drawable.ic_hall, false));
+        categories.add(new CategoryModel(5, "Wardrobe", R.drawable.ic_wardrobe, false));
+        categories.add(new CategoryModel(6, "Medical center", R.drawable.ic_med, false));
+        categories.add(new CategoryModel(7, "Student center", R.drawable.ic_s_center, false));
+        categories.add(new CategoryModel(8, "WC", R.drawable.ic_wc, false));
+        categories.add(new CategoryModel(9, "Others", R.drawable.ic_others, false));
+        return categories;
+    }
+
+    private ArrayList<PlaceModel> getPlaces() {
+        ArrayList<PlaceModel> places = new ArrayList<>();
+        places.add(new PlaceModel(0, "Red Hall", 1, 43.208761, 76.670166));
+        places.add(new PlaceModel(1, "Library", 2, 43.208819, 76.669663));
+        places.add(new PlaceModel(2, "Dining Room", 0, 43.207437, 76.669583));
+        places.add(new PlaceModel(3, "B1 Lecture", 3, 43.208130, 76.669516));
+        places.add(new PlaceModel(4, "Engineering", 3, 43.207436, 76.670144));
+        places.add(new PlaceModel(5, "Economic", 3, 43.207011, 76.670320));
+        places.add(new PlaceModel(6, "C1 Lecture", 3, 43.207929, 76.669483));
+        places.add(new PlaceModel(7, "White Canteen", 0, 43.208598, 76.669467));
+        return places;
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
@@ -377,15 +429,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
-
-
-
-
-
-
-
 
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {

@@ -1,4 +1,4 @@
-package kz.sdu.map.sdu_maps;
+package kz.sdu.map.sdu_maps.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import kz.sdu.map.sdu_maps.R;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.VHCategories> {
@@ -66,7 +67,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.VH
         }
     }
 
-    interface OnClickListener {
+    public interface OnClickListener {
         void onCategoryClicked(int categoryId);
     }
 }

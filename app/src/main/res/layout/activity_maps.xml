@@ -13,7 +13,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/flCat"
+        app:layout_constraintBottom_toTopOf="@id/clCat"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -22,55 +22,61 @@
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"
         android:src="@drawable/ic_icon_others_24dp"
-        tools:ignore="ContentDescription,MissingConstraints"
-        />
+        tools:ignore="ContentDescription,MissingConstraints" />
 
-    <LinearLayout
-        android:id="@+id/flCat"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/clCat"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@color/bg"
-        android:padding="16dp"
-        android:visibility="gone"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent">
 
-        <SearchView
-            android:id="@+id/sv_location"
+        <LinearLayout
+            android:id="@+id/flCat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/sv_back"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search..."
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@color/bg"
+            android:orientation="vertical"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/sv_location"
-            tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="458dp">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <SearchView
+                android:id="@+id/sv_location"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tabFavorites"
-                android:text="Favorites" />
+                android:layout_margin="16dp"
+                android:background="@drawable/sv_back"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search..."
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tabFacultets"
-                android:text="Facultets" />
+                app:layout_constraintTop_toBottomOf="@id/sv_location"
+                app:tabIndicatorColor="@android:color/white"
+                app:tabTextColor="@android:color/white"
+                tools:layout_editor_absoluteX="1dp"
+                tools:layout_editor_absoluteY="458dp">
 
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tabFavorites"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tabFacultets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-    </LinearLayout>
+            </com.google.android.material.tabs.TabLayout>
 
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white" />
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

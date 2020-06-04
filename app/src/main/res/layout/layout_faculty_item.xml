@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/ivFacultyLogo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/shape_background_circle_placeholder_dark"
+        android:padding="8dp"
+        android:src="@mipmap/ic_launcher"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvFacultyName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        tools:text="Факультет Инжериии и Естественных наук к кк к к к к " />
+
+
+    <ImageView
+        android:id="@+id/ivNext"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:alpha="0.6"
+        android:src="@drawable/ic_chevron_right_black_24dp"
+        tools:ignore="ContentDescription" />
+</LinearLayout>
