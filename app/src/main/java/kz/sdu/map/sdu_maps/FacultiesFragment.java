@@ -17,6 +17,7 @@ import java.util.List;
 import kz.sdu.map.sdu_maps.adapters.FacultiesAdapter;
 import kz.sdu.map.sdu_maps.adapters.RoomsAdapter;
 import kz.sdu.map.sdu_maps.constants.Constants;
+import kz.sdu.map.sdu_maps.listeners.OnBetweenFragmentListener;
 import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.listeners.OnRoomSelectedListener;
 import kz.sdu.map.sdu_maps.models.MapMarkerModel;
@@ -34,11 +35,13 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
     private LinearLayout toolbar;
     private TextView selectedFacultyName;
     private OnMarkersShowListener listener;
+    private OnBetweenFragmentListener fragmentListener;
     private int selectedFacultyId;
     private List<RoomModel> shownRooms;
 
-    FacultiesFragment(OnMarkersShowListener listener) {
+    FacultiesFragment(OnMarkersShowListener listener, OnBetweenFragmentListener fragmentListener) {
         this.listener = listener;
+        this.fragmentListener = fragmentListener;
     }
 
     private RoomsAdapter roomsAdapter;
@@ -86,6 +89,7 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
 
     @Override
     public void onClick(int facultyId, String facultyName) {
+        fragmentListener.onFragmentListener();
         rvFaculties.setVisibility(View.GONE);
         toolbar.setVisibility(View.VISIBLE);
         selectedFacultyName.setText(facultyName);

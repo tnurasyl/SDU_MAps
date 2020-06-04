@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kz.sdu.map.sdu_maps.constants.Constants;
+import kz.sdu.map.sdu_maps.listeners.OnBetweenFragmentListener;
 import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
 import kz.sdu.map.sdu_maps.models.MapMarkerModel;
@@ -58,7 +59,7 @@ import kz.sdu.map.sdu_maps.models.PlaceModel;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, OnMarkersShowListener {
+        LocationListener, OnMarkersShowListener, OnBetweenFragmentListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
 
@@ -72,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker currentLocationmMarker;
     private ArrayList<CategoryModel> categories;
     private List<PlaceModel> places;
+    private PagerAdapter pagerAdapter;
     public static final int REQUEST_LOCATION_CODE = 99;
 
     private List<Marker> shownMarkers = new ArrayList<>();
@@ -157,8 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final ViewPager viewPager = findViewById(R.id.viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), this);
-
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), this, this);
         viewPager.setAdapter(pagerAdapter);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -404,8 +405,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
-        canvas.drawCircle((float)(bitmap.getWidth() / 2)
-                , (float)(bitmap.getHeight() / 2)
+        canvas.drawCircle((float) (bitmap.getWidth() / 2)
+                , (float) (bitmap.getHeight() / 2)
                 , (float) Math.min(bitmap.getWidth(), (bitmap.getHeight() / 2)), paint);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
@@ -423,5 +424,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .icon(bitmapDescriptorFromVector(this, places.get(i).getMarkerIcon()))
                     .zIndex(1.0f)));
         }
+    }
+
+    @Override
+    public void onFragmentListener() {
+        pagerAdapter.unselectAllMarkers();
     }
 }

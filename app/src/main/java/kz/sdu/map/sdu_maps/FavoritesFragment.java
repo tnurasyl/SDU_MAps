@@ -84,4 +84,12 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
         }
         return mapMarkerModels;
     }
+
+    public void unselectAllMarkers() {
+        for (CategoryModel categoryModel : categories) {
+            categoryModel.setSelected(false);
+        }
+        markersShowListener.showMarkers(new ArrayList<MapMarkerModel>());
+        adapter.notifyDataSetChanged();
+    }
 }
