@@ -11,14 +11,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kz.sdu.map.sdu_maps.adapters.CategoriesAdapter;
+import kz.sdu.map.sdu_maps.constants.Constants;
+import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
+import kz.sdu.map.sdu_maps.models.MapMarkerModel;
+import kz.sdu.map.sdu_maps.models.PlaceModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnClickListener {
+
+    private OnMarkersShowListener markersShowListener;
+
+    FavoritesFragment(OnMarkersShowListener listener) {
+        markersShowListener = listener;
+    }
 
     private RecyclerView rvCategories;
     private ArrayList<CategoryModel> categories;
@@ -33,7 +44,7 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
         rvCategories = view.findViewById(R.id.rvCategories);
-        categories = getCategories();
+        categories = Constants.getCategories();
         configureRVCategories();
         return view;
     }
@@ -48,9 +59,16 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
     public void onCategoryClicked(int categoryId) {
         if (categories.get(categoryId).isSelected()) {
             categories.get(categoryId).setSelected(false);
-//            drawMarkers(-1);
+            markersShowListener.showMarkers(placesToMapModel(Constants.getPlaces()));
+
         } else {
-//            drawMarkers(categoryId);
+            ArrayList<PlaceModel> categoryPlaces = new ArrayList<>();
+            for (PlaceModel place : Constants.getPlaces()) {
+                if (place.getCategoryId() == categoryId) {
+                    categoryPlaces.add(place);
+                }
+            }
+            markersShowListener.showMarkers(placesToMapModel(categoryPlaces));
             for (int i = 0; i < categories.size(); i++) {
                 if (categoryId == i) categories.get(i).setSelected(true);
                 else categories.get(i).setSelected(false);
@@ -59,18 +77,11 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
         adapter.notifyDataSetChanged();
     }
 
-    private ArrayList<CategoryModel> getCategories() {
-        ArrayList<CategoryModel> categories = new ArrayList<>();
-        categories.add(new CategoryModel(0, "Eating", R.drawable.ic_eat, false));
-        categories.add(new CategoryModel(1, "Halls", R.drawable.ic_hall, false));
-        categories.add(new CategoryModel(2, "Library", R.drawable.ic_library, false));
-        categories.add(new CategoryModel(3, "Technopark ", R.drawable.ic_hall, false));
-        categories.add(new CategoryModel(4, "Accounting", R.drawable.ic_hall, false));
-        categories.add(new CategoryModel(5, "Wardrobe", R.drawable.ic_wardrobe, false));
-        categories.add(new CategoryModel(6, "Medical center", R.drawable.ic_med, false));
-        categories.add(new CategoryModel(7, "Student center", R.drawable.ic_s_center, false));
-        categories.add(new CategoryModel(8, "WC", R.drawable.ic_wc, false));
-        categories.add(new CategoryModel(9, "Others", R.drawable.ic_others, false));
-        return categories;
+    private List<MapMarkerModel> placesToMapModel(List<PlaceModel> items) {
+        ArrayList<MapMarkerModel> mapMarkerModels = new ArrayList<>();
+        for (PlaceModel item : items) {
+            mapMarkerModels.add(new MapMarkerModel(item.getName(), item.getLatitude(), item.getLongitude(), Constants.getCategories().get(item.getCategoryId()).getMarkerIcon()));
+        }
+        return mapMarkerModels;
     }
 }

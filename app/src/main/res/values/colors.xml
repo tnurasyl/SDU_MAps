@@ -8,4 +8,6 @@
 
     <color name="colorSelectedCategory">#FFFF0000</color>
     <color name="colorUnselectedCategory"> #000000</color>
+    <color name="colorGray">#FFADA8A8</color>
+    <color name="colorWhite">#FFFFFF</color>
 </resources>

@@ -5,9 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,13 +48,14 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
-import kz.sdu.map.sdu_maps.models.PlaceModel;
+import kz.sdu.map.sdu_maps.models.MapMarkerModel;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, OnMarkersShowListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
 
@@ -69,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int REQUEST_LOCATION_CODE = 99;
 
     private List<Marker> shownMarkers = new ArrayList<>();
-    private ArrayList<PlaceModel> places;
+//    private ArrayList<PlaceModel> places;
 
     private boolean isOpenCategory = false;
 
@@ -80,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         categories = getCategories();
 
-        places = getPlaces();
+//        places = getPlaces();
         flCategory = findViewById(R.id.flCat);
         openCloseCategory = findViewById(R.id.ivOpenCloseCat);
 
@@ -108,27 +110,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 List<Address> addressList = null;
                 LatLng latLng = null;
 
-                if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder(MapsActivity.this);
-                    try {
-                        for (int i = 0; i < places.size(); i++) {
-                            String mm = places.get(i).getName().toLowerCase();
-                            if (mm.matches("(.*)" + query.toLowerCase() + "(.*)")) {
-                                double lat = places.get(i).getLatitude();
-                                double lon = places.get(i).getLongitude();
-                                latLng = new LatLng(lat, lon);
-                            }
-                        }
-//                        addressList = geocoder.getFromLocationName(location, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-//                    Address address = addressList.get(0);
-//                    latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    if (latLng != null) {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 60));
-                    }
-                }
+//                if (location != null || !location.equals("")) {
+//                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+//                    try {
+//                        for (int i = 0; i < places.size(); i++) {
+//                            String mm = places.get(i).getName().toLowerCase();
+//                            if (mm.matches("(.*)" + query.toLowerCase() + "(.*)")) {
+//                                double lat = places.get(i).getLatitude();
+//                                double lon = places.get(i).getLongitude();
+//                                latLng = new LatLng(lat, lon);
+//                            }
+//                        }
+////                        addressList = geocoder.getFromLocationName(location, 1);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+////                    Address address = addressList.get(0);
+////                    latLng = new LatLng(address.getLatitude(), address.getLongitude());
+//                    if (latLng != null) {
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 60));
+//                    }
+//                }
                 return false;
             }
 
@@ -153,7 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final ViewPager viewPager = findViewById(R.id.viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
-        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), this);
 
         viewPager.setAdapter(pagerAdapter);
 
@@ -223,6 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         setMapStyle();
     }
@@ -317,32 +320,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         client.connect();
     }
 
-    private void drawMarkers(int categoryId) {
-        for (Marker marker : shownMarkers) {
-            marker.remove();
-        }
-
-        if (categoryId == -1) {
-            for (int i = 0; i < places.size(); i++) {
-                shownMarkers.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
-                        .title(places.get(i).getName())
-                        .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
-                        .zIndex(1.0f)));
-            }
-        } else {
-            for (int i = 0; i < places.size(); i++) {
-                if (places.get(i).getCategoryId() == categoryId) {
-                    shownMarkers.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
-                            .title(places.get(i).getName())
-//                            .icon(bitmapDescriptorFromVector(this, categories.get(places.get(i).getCategoryId()).getMarkerIcon()))
-                            .zIndex(1.0f)));
-                }
-            }
-        }
-    }
-
     private ArrayList<CategoryModel> getCategories() {
         ArrayList<CategoryModel> categories = new ArrayList<>();
         categories.add(new CategoryModel(0, "Eating", R.drawable.ic_eat, false));
@@ -356,19 +333,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         categories.add(new CategoryModel(8, "WC", R.drawable.ic_wc, false));
         categories.add(new CategoryModel(9, "Others", R.drawable.ic_others, false));
         return categories;
-    }
-
-    private ArrayList<PlaceModel> getPlaces() {
-        ArrayList<PlaceModel> places = new ArrayList<>();
-        places.add(new PlaceModel(0, "Red Hall", 1, 43.208761, 76.670166));
-        places.add(new PlaceModel(1, "Library", 2, 43.208819, 76.669663));
-        places.add(new PlaceModel(2, "Dining Room", 0, 43.207437, 76.669583));
-        places.add(new PlaceModel(3, "B1 Lecture", 3, 43.208130, 76.669516));
-        places.add(new PlaceModel(4, "Engineering", 3, 43.207436, 76.670144));
-        places.add(new PlaceModel(5, "Economic", 3, 43.207011, 76.670320));
-        places.add(new PlaceModel(6, "C1 Lecture", 3, 43.207929, 76.669483));
-        places.add(new PlaceModel(7, "White Canteen", 0, 43.208598, 76.669467));
-        return places;
     }
 
     @Override
@@ -436,8 +400,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.WHITE);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
+    @Override
+    public void showMarkers(List<MapMarkerModel> places) {
+        for (Marker marker : shownMarkers) {
+            marker.remove();
+        }
+        for (int i = 0; i < places.size(); i++) {
+            shownMarkers.add(mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(places.get(i).getLatitude(), places.get(i).getLongitude()))
+                    .title(places.get(i).getTitle())
+                    .icon(bitmapDescriptorFromVector(this, places.get(i).getMarkerIcon()))
+                    .zIndex(1.0f)));
+        }
+    }
 }

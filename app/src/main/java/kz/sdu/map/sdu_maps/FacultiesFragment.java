@@ -17,18 +17,29 @@ import java.util.List;
 import kz.sdu.map.sdu_maps.adapters.FacultiesAdapter;
 import kz.sdu.map.sdu_maps.adapters.RoomsAdapter;
 import kz.sdu.map.sdu_maps.constants.Constants;
+import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
+import kz.sdu.map.sdu_maps.listeners.OnRoomSelectedListener;
+import kz.sdu.map.sdu_maps.models.MapMarkerModel;
 import kz.sdu.map.sdu_maps.models.RoomModel;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFacultyClickListener {
+public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFacultyClickListener,
+        OnRoomSelectedListener {
 
     private RecyclerView rvFaculties;
     private RecyclerView rvRooms;
     private LinearLayout toolbar;
     private TextView selectedFacultyName;
+    private OnMarkersShowListener listener;
+    private int selectedFacultyId;
+    private List<RoomModel> shownRooms;
+
+    FacultiesFragment(OnMarkersShowListener listener) {
+        this.listener = listener;
+    }
 
     private RoomsAdapter roomsAdapter;
 
@@ -46,7 +57,7 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
         rvFaculties.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rvFaculties.setAdapter(adapter);
 
-        roomsAdapter = new RoomsAdapter(Constants.getRooms());
+        roomsAdapter = new RoomsAdapter(Constants.getRooms(), this);
         rvRooms.setLayoutManager(new LinearLayoutManager(view.getContext()));
         rvRooms.setAdapter(roomsAdapter);
 
@@ -56,6 +67,7 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
                 toolbar.setVisibility(View.GONE);
                 rvRooms.setVisibility(View.GONE);
                 rvFaculties.setVisibility(View.VISIBLE);
+                listener.showMarkers(new ArrayList<MapMarkerModel>());
             }
         });
 
@@ -78,6 +90,38 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
         toolbar.setVisibility(View.VISIBLE);
         selectedFacultyName.setText(facultyName);
         rvRooms.setVisibility(View.VISIBLE);
+        shownRooms = getRoomsByFaculty(facultyId);
         roomsAdapter.updateData(getRoomsByFaculty(facultyId));
+        selectedFacultyId = facultyId;
+        listener.showMarkers(roomsToMapModel(getFacultyRooms(facultyId)));
+    }
+
+    private List<MapMarkerModel> roomsToMapModel(List<RoomModel> items) {
+        ArrayList<MapMarkerModel> mapMarkerModels = new ArrayList<>();
+        for (RoomModel item : items) {
+            mapMarkerModels.add(new MapMarkerModel(item.getRoomName(), item.getLatitude(), item.getLongitude(), item.getLogoId()));
+        }
+        return mapMarkerModels;
+    }
+
+    private List<RoomModel> getFacultyRooms(int facultyId) {
+        ArrayList<RoomModel> rooms = new ArrayList<>();
+        for (RoomModel room : Constants.getRooms()) {
+            if (room.getFacultyId() == facultyId) {
+                rooms.add(room);
+            }
+        }
+        return rooms;
+    }
+
+    @Override
+    public void onRoomSelected(RoomModel room) {
+        if (!room.isSelected()) {
+            listener.showMarkers(roomsToMapModel(getFacultyRooms(selectedFacultyId)));
+        } else {
+            ArrayList<RoomModel> rooms = new ArrayList<>();
+            rooms.add(room);
+            listener.showMarkers(roomsToMapModel(rooms));
+        }
     }
 }

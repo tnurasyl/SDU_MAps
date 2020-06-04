@@ -13,7 +13,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/clCat"
+        app:layout_constraintBottom_toTopOf="@id/flCat"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -24,15 +24,16 @@
         android:src="@drawable/ic_icon_others_24dp"
         tools:ignore="ContentDescription,MissingConstraints" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/clCat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
+<!--        android:id="@+id/clCat"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
         <LinearLayout
             android:id="@+id/flCat"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
+            android:visibility="gone"
             android:background="@color/bg"
             android:orientation="vertical"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
@@ -78,5 +79,5 @@
 
         </LinearLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+<!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
