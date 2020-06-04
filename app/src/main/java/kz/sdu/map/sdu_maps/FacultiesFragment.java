@@ -89,7 +89,7 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
 
     @Override
     public void onClick(int facultyId, String facultyName) {
-        fragmentListener.onFragmentListener();
+        fragmentListener.onAFragmentListener();
         rvFaculties.setVisibility(View.GONE);
         toolbar.setVisibility(View.VISIBLE);
         selectedFacultyName.setText(facultyName);
@@ -127,5 +127,11 @@ public class FacultiesFragment extends Fragment implements FacultiesAdapter.OnFa
             rooms.add(room);
             listener.showMarkers(roomsToMapModel(rooms));
         }
+    }
+
+    public void showFaculties() {
+        rvRooms.setVisibility(View.GONE);
+        rvFaculties.setVisibility(View.VISIBLE);
+        toolbar.setVisibility(View.GONE);
     }
 }

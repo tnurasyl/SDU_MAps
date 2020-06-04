@@ -70,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient client;
     private LocationRequest locationRequest;
     private Location lastlocation;
+    private ViewPager viewPager;
     private Marker currentLocationmMarker;
     private ArrayList<CategoryModel> categories;
     private List<PlaceModel> places;
@@ -93,6 +94,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 if (isOpenCategory) {
                     flCategory.setVisibility(View.GONE);
+                    showMarkers(new ArrayList<MapMarkerModel>());
+                    pagerAdapter.unselectAllMarkers();
+                    pagerAdapter.goToFaculties();
+                    viewPager.setCurrentItem(0);
                     isOpenCategory = false;
                 } else {
                     flCategory.setVisibility(View.VISIBLE);
@@ -156,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         TabItem tabFavorites = findViewById(R.id.tabFavorites);
         TabItem tabFaculites = findViewById(R.id.tabFacultets);
-        final ViewPager viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(), this, this);
@@ -427,7 +432,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onFragmentListener() {
+    public void onAFragmentListener() {
         pagerAdapter.unselectAllMarkers();
+    }
+
+    @Override
+    public void onBFragmentListener() {
+        pagerAdapter.goToFaculties();
     }
 }

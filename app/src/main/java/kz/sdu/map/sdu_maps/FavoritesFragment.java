@@ -15,6 +15,7 @@ import java.util.List;
 
 import kz.sdu.map.sdu_maps.adapters.CategoriesAdapter;
 import kz.sdu.map.sdu_maps.constants.Constants;
+import kz.sdu.map.sdu_maps.listeners.OnBetweenFragmentListener;
 import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
 import kz.sdu.map.sdu_maps.models.MapMarkerModel;
@@ -26,9 +27,11 @@ import kz.sdu.map.sdu_maps.models.PlaceModel;
 public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnClickListener {
 
     private OnMarkersShowListener markersShowListener;
+    private OnBetweenFragmentListener fragmentListener;
 
-    FavoritesFragment(OnMarkersShowListener listener) {
+    FavoritesFragment(OnMarkersShowListener listener, OnBetweenFragmentListener fragmentListener) {
         markersShowListener = listener;
+        this.fragmentListener = fragmentListener;
     }
 
     private RecyclerView rvCategories;
@@ -57,6 +60,7 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
 
     @Override
     public void onCategoryClicked(int categoryId) {
+        fragmentListener.onBFragmentListener();
         if (categories.get(categoryId).isSelected()) {
             categories.get(categoryId).setSelected(false);
             markersShowListener.showMarkers(placesToMapModel(Constants.getPlaces()));
@@ -89,7 +93,6 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
         for (CategoryModel categoryModel : categories) {
             categoryModel.setSelected(false);
         }
-        markersShowListener.showMarkers(new ArrayList<MapMarkerModel>());
         adapter.notifyDataSetChanged();
     }
 }

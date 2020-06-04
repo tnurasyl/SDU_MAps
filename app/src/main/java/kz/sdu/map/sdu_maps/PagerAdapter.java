@@ -28,7 +28,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                favoritesFragment = new FavoritesFragment(listener);
+                favoritesFragment = new FavoritesFragment(listener, fragmentListener);
                 return favoritesFragment;
             case 1:
                 facultiesFragment = new FacultiesFragment(listener, fragmentListener);
@@ -40,6 +40,10 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     public void unselectAllMarkers() {
         favoritesFragment.unselectAllMarkers();
+    }
+
+    public void goToFaculties() {
+        facultiesFragment.showFaculties();
     }
 
     @Override
