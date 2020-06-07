@@ -8,4 +8,5 @@
 
     <color name="colorSelectedCategory">#FFFF0000</color>
     <color name="colorUnselectedCategory"> #FFFFFF</color>
+    <color name="color"> #DDDDDD</color>
 </resources>
