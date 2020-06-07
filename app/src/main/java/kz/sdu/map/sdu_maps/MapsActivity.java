@@ -55,6 +55,7 @@ import kz.sdu.map.sdu_maps.listeners.OnMarkersShowListener;
 import kz.sdu.map.sdu_maps.models.CategoryModel;
 import kz.sdu.map.sdu_maps.models.MapMarkerModel;
 import kz.sdu.map.sdu_maps.models.PlaceModel;
+import kz.sdu.map.sdu_maps.models.RoomModel;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -94,10 +95,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 if (isOpenCategory) {
                     flCategory.setVisibility(View.GONE);
-                    showMarkers(new ArrayList<MapMarkerModel>());
-                    pagerAdapter.unselectAllMarkers();
-                    pagerAdapter.goToFaculties();
-                    viewPager.setCurrentItem(0);
+//                    showMarkers(new ArrayList<MapMarkerModel>());
+//                    pagerAdapter.unselectAllMarkers();
+//                    pagerAdapter.goToFaculties();
+//                    viewPager.setCurrentItem(0);
                     isOpenCategory = false;
                 } else {
                     flCategory.setVisibility(View.VISIBLE);
@@ -114,31 +115,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String location = searchView.getQuery().toString();
-                List<Address> addressList = null;
-                LatLng latLng = null;
-
-                if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder(MapsActivity.this);
-
-                    try {
-                        for (int i = 0; i < places.size(); i++) {
-                            String mm = places.get(i).getName().toLowerCase();
-                            if (mm.matches("(.*)" + query.toLowerCase() + "(.*)")) {
-                                double lat = places.get(i).getLatitude();
-                                double lon = places.get(i).getLongitude();
-                                latLng = new LatLng(lat, lon);
-                            }
-                        }
-//                        addressList = geocoder.getFromLocationName(location, 1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                ArrayList<MapMarkerModel> items = new ArrayList<>();
+                for (RoomModel room : Constants.getRooms()) {
+                    if (room.getRoomName().toLowerCase().contains(query.toLowerCase())) {
+                        items.add(new MapMarkerModel(room.getRoomName(), room.getLatitude(), room.getLongitude(), room.getLogoId()));
                     }
-//                    Address address = addressList.get(0);
-//                    latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    if (latLng != null) {
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 60));
+                }
+                for (PlaceModel place : Constants.getPlaces()){
+                    if (place.getName().toLowerCase().equals(query.toLowerCase())){
+                        items.add(new MapMarkerModel(place.getName(), place.getLatitude(), place.getLongitude(), Constants.getCategories().get(place.getCategoryId()).getMarkerIcon()));
                     }
+                }
+                showMarkers(items);
+
+                if (items.size() > 0) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(items.get(0).getLatitude(), items.get(0).getLongitude()), 60));
                 }
                 return false;
             }
@@ -223,7 +214,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TODO setting photo
         GroundOverlayOptions newarkMap = new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.map))
-                .position(sdu, 100f, 300f);
+                .position(sdu, 120f, 300f);
         mMap.addGroundOverlay(newarkMap);
 
 //        drawMarkers(-1);
@@ -332,13 +323,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         categories.add(new CategoryModel(0, "Eating", R.drawable.ic_eat, false));
         categories.add(new CategoryModel(1, "Halls", R.drawable.ic_hall, false));
         categories.add(new CategoryModel(2, "Library", R.drawable.ic_library, false));
-        categories.add(new CategoryModel(3, "Technopark ", R.drawable.ic_hall, false));
-        categories.add(new CategoryModel(4, "Accounting", R.drawable.ic_hall, false));
+        categories.add(new CategoryModel(3, "Market", R.drawable.ic_others, false));
+        categories.add(new CategoryModel(4, "It department", R.drawable.ic_it_department, false));
         categories.add(new CategoryModel(5, "Wardrobe", R.drawable.ic_wardrobe, false));
         categories.add(new CategoryModel(6, "Medical center", R.drawable.ic_med, false));
-        categories.add(new CategoryModel(7, "Student center", R.drawable.ic_s_center, false));
-        categories.add(new CategoryModel(8, "WC", R.drawable.ic_wc, false));
-        categories.add(new CategoryModel(9, "Others", R.drawable.ic_others, false));
+        categories.add(new CategoryModel(7, "WC", R.drawable.ic_wc, false));
+        categories.add(new CategoryModel(8, "Accounting ", R.drawable.ic_accounting, false));
+        categories.add(new CategoryModel(9, "Student center", R.drawable.ic_s_center, false));
+        categories.add(new CategoryModel(10, "Copy center", R.drawable.ic_copycenter, false));
+        categories.add(new CategoryModel(11, "Technopark ", R.drawable.ic_technopark, false));
+        categories.add(new CategoryModel(12, "Career center", R.drawable.ic_career_center, false));
+        categories.add(new CategoryModel(13, "Wifi-zone", R.drawable.ic_wifi_zone, false));
+        categories.add(new CategoryModel(14, "IR office", R.drawable.ic_ir_center, false));
         return categories;
     }
 

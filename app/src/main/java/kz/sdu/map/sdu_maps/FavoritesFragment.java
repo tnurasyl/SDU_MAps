@@ -53,7 +53,7 @@ public class FavoritesFragment extends Fragment implements CategoriesAdapter.OnC
     }
 
     private void configureRVCategories() {
-        rvCategories.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.HORIZONTAL));
+        rvCategories.setLayoutManager(new StaggeredGridLayoutManager(5, LinearLayoutManager.VERTICAL));
         adapter = new CategoriesAdapter(categories, getContext(), this);
         rvCategories.setAdapter(adapter);
     }

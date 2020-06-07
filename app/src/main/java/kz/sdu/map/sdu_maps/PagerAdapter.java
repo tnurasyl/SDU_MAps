@@ -56,6 +56,6 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
             return "Favorites";
-        } else return "Facultets";
+        } else return "Faculties";
     }
 }
